@@ -141,6 +141,9 @@ def run():
                 if data['status'] == log_ok_tag:
                     log_data(data)
                     print()
+                elif data['status'] == log_start_tag:
+                    print("LOGGING STARTED")
+                    print()
                 elif data['status'] == log_stop_tag:
                     print("LOGGING STOPPED")
                     break
@@ -156,6 +159,7 @@ def run():
 
 env = env()
 log_ok_tag = "OK"
+log_start_tag = "START"
 log_stop_tag = "STOP"
 cpx_device = cpx_device()
 serial_device = serial_device()
