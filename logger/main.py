@@ -100,6 +100,7 @@ def log_data(data):
     data['humidity'] = ''
     data['device'] = cpx_device
     data['key'] = config[env]['key']
+    data['readingTime'] = data['readingTime']
 
     print("LOGGING DATA")
     print("Post request to:", url)
@@ -110,14 +111,17 @@ def log_data(data):
 
 
 def process_serial_output(ser_output):
+    timestamp_utc = datetime.utcnow()
+
     print("SERIAL OUTPUT")
-    print("{0}: {1}".format(datetime.now(), ser_output))
+    print("{0} (UTC): {1}".format(timestamp_utc, ser_output))
 
     data = {}
     raw_data = ser_output.split(',')
     data['status'] = raw_data[0]
 
     if log_ok_tag in data['status']:
+        data['readingTime'] = timestamp_utc
         data['temperature'] = raw_data[1]
         data['light'] = raw_data[2]
         data['sound'] = raw_data[3]
