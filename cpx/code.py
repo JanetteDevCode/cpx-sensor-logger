@@ -22,15 +22,32 @@ def normalized_rms(values):
 
 
 def activate():
-    global isActive
-    isActive = True
-    cp.pixels.fill(green)
+    global is_active
+    global previous_time
+    
+    if not is_active:
+        is_active = True
+        current_time = time.monotonic()
+        previous_time = current_time
+        cp.pixels.fill(green)
+        print("START")
 
 
 def deactivate():
-    global isActive
-    isActive = False
-    cp.pixels.fill(red)
+    global is_active
+    global previous_time
+    
+    if is_active:
+        is_active = False
+        previous_time = None
+        cp.pixels.fill(red)
+        print("STOP")
+
+
+def read_sensors(mic, samples):
+    mic.record(samples, len(samples))
+    sound = normalized_rms(samples)
+    print("OK", cp.temperature * 9 / 5 + 32, cp.light, sound, sep=",")
 
 
 mic = audiobusio.PDMIn(
@@ -40,29 +57,23 @@ mic = audiobusio.PDMIn(
     bit_depth=16
 )
 samples = array.array('H', [0] * 160)
-currentTime = time.monotonic()
-previousTime = currentTime
-interval = 60.0 * 10
+previous_time = None
+interval = 10
 red = (10, 0, 0)
 green = (0, 10, 0)
-isActive = None
+is_active = None
 
 activate()
 
 while True:
-    currentTime = time.monotonic()
+    current_time = time.monotonic()
 
-    if (currentTime - previousTime) >= interval:
-        if isActive:
-            mic.record(samples, len(samples))
-            sound = normalized_rms(samples)
-            print("OK", cp.temperature * 9 / 5 + 32, cp.light, sound, sep=",")
-        else:
-            print("STOP")
-        previousTime = currentTime
+    if is_active and (current_time - previous_time) >= interval:
+        read_sensors(mic, samples)
+        previous_time = current_time        
 
     if cp.button_a:
         activate()
+        
     elif cp.button_b:
         deactivate()
-
