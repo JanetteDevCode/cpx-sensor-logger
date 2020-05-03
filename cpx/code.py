@@ -37,7 +37,7 @@ def deactivate():
     global is_active
     global previous_time
     
-    if is_active:
+    if is_active == None or is_active:
         is_active = False
         previous_time = None
         cp.pixels.fill(red)
@@ -63,7 +63,7 @@ red = (10, 0, 0)
 green = (0, 10, 0)
 is_active = None
 
-activate()
+deactivate()
 
 while True:
     current_time = time.monotonic()
