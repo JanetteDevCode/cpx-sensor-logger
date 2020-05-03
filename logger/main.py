@@ -79,7 +79,8 @@ def env():
 def log_data(data):
     host = config[env]['host']
     port = config[env]['port']
-    url = 'https://' + host + ':' + port + '/api/v1/add'
+    path = config[env]['path']
+    url = 'https://' + host + ':' + port + path
 
     try:
         data['temperature'] = float(data['temperature'])
