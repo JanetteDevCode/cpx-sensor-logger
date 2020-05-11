@@ -58,7 +58,7 @@ mic = audiobusio.PDMIn(
 )
 samples = array.array('H', [0] * 160)
 previous_time = None
-interval = 10
+interval = 60 * 1 # seconds * minutes
 red = (10, 0, 0)
 green = (0, 10, 0)
 is_active = None
@@ -68,7 +68,7 @@ deactivate()
 while True:
     current_time = time.monotonic()
 
-    if is_active and (current_time - previous_time) >= interval:
+    if is_active and abs(current_time - previous_time) >= interval:
         read_sensors(mic, samples)
         previous_time = current_time        
 
